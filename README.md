@@ -16,3 +16,9 @@ A simple, modular command-line application that generates structured travel advi
   - Indexed with `all-MiniLM-L6-v2` embeddings and **Chroma**
 - 🤖 Uses `Qwen1.5-1.8B-Chat` LLM to generate professional-grade advisories
 - 💾 Outputs final advisory as a `.txt` file in `generated_advisories/`
+
+---
+
+By default, the project uses a prebuilt KnowledgeBase.txt and a persistent chroma_store/ for faster startup.
+
+You can delete both files and run the script to build your own knowledge base — just know it will take a few minutes (scraping & indexing ~60 countries).
