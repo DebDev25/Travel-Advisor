@@ -99,6 +99,9 @@ def build_chat_messages(city, country, weather, languages, locations, advisory_t
             "- Add short bullet points with safety tips.\n"
             "- End with a warm, professional closing.\n\n"
 
+            "Use this background country-specific information to guide your response:\n"
+            f"{advisory_text}\n\n"
+
             "You must include **all 5 sections** in the final output, with the section headers exactly as shown above. "
             "Use a professional tone, avoid repetition, and do not invent extra headings. Do not skip the weather, language, or locations sections."
         )
