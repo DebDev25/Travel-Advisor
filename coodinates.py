@@ -20,7 +20,7 @@ class Coordinates:
             'limit': 1,
         }
 
-        coord_res = requests.get(self.url, coord_params)
+        coord_res = requests.get(self.url, params=coord_params)
         coord_res.raise_for_status()
         coord_data = coord_res.json()
 

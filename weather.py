@@ -18,7 +18,7 @@ class Weather:
             'appid': api,
         }
 
-        weather_res = requests.get(self.url, weather_params)
+        weather_res = requests.get(self.url, params=weather_params)
         weather_res.raise_for_status()
         weather_data = weather_res.json()
 

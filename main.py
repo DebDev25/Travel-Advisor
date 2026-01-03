@@ -1,9 +1,10 @@
 import os
 import warnings
 
+from dotenv import load_dotenv
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-import knowlege_base
+import knowledge_base
 from coodinates import Coordinates
 from languages import Languages
 from locations import Locations
@@ -13,15 +14,26 @@ from weather import Weather
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+# loads .env into environment variables
+load_dotenv()
+
 # User input
 city = input("Enter the city's name: ")
 country = input("Enter the country: ").title()
 print("Please wait....\n\n")
 
 # API Key
-WEATHER_API_KEY = "ENTER YOUR OPENWEATHERMAP API KEY HERE"
-LOC_API_KEY = "ENTER YOUR GEOAPIFY API KEY HERE"
-GEONAMES_USERNAME = 'ENTER YOUR GEONAMES USERNAME HERE'
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+if not WEATHER_API_KEY:
+    raise RuntimeError("Weather API key is missing")
+
+LOC_API_KEY = os.getenv("LOC_API_KEY")
+if not LOC_API_KEY:
+    raise RuntimeError("Location API key is missing")
+
+GEONAMES_USERNAME = os.getenv("GEONAMES_USERNAME")
+if not GEONAMES_USERNAME:
+    raise RuntimeError("Geonames username is missing")
 
 # -------------------------------------------- API USAGE ---------------------------------------------------------------
 
@@ -46,14 +58,14 @@ locations = loc.get_locations(latitude=lat, longitude=lon, api=LOC_API_KEY)
 # Working with the knowledge
 confirmation = input("Do you want to update the knowledge base? (Y/N): ").upper()
 if confirmation == "Y":
-    knowlege_base.generate(confirmation=confirmation)
+    knowledge_base.generate(confirmation=confirmation)
 else:
-    knowlege_base.load_and_index()
+    knowledge_base.load_and_index()
 
 print("Please wait as we generate the advisory.... ")
 
 # Retrieving knowledge base
-results = knowlege_base.retrieve(country=country)
+results = knowledge_base.retrieve(country=country)
 
 advisory_text = results[0].page_content.strip()
 
