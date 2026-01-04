@@ -20,9 +20,15 @@ class Locations:
             'apiKey': api,
         }
 
-        loc_res = requests.get(self.url, params=loc_params)
-        loc_res.raise_for_status()
-        loc_data = loc_res.json()
+        # Handling API response
+        try:
+            loc_res = requests.get(self.url, params=loc_params)
+            loc_res.raise_for_status()
+            loc_data = loc_res.json()
+        except requests.exceptions.RequestException:
+            raise RuntimeError("Geoapify API request failed")
+        except (KeyError, ValueError):
+            raise RuntimeError("Geoapify API returned unexpected data format")
 
         locations = [_["properties"].get("name", "Unnamed") for _ in loc_data["features"]]
 

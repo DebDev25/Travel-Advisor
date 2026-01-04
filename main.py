@@ -9,18 +9,22 @@ from coodinates import Coordinates
 from languages import Languages
 from locations import Locations
 from weather import Weather
+from validator import valid_country
 
 # Suppress LangChain deprecation warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-# loads .env into environment variables
+# Loads .env into environment variables
 load_dotenv()
 
 # User input
 city = input("Enter the city's name: ")
 country = input("Enter the country: ").title()
 print("Please wait....\n\n")
+
+# Validating user input & converting country to it's ISO value
+country_ISO = valid_country(country)
 
 # API Key
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
@@ -38,7 +42,7 @@ if not GEONAMES_USERNAME:
 # -------------------------------------------- API USAGE ---------------------------------------------------------------
 
 # Get the coordinates
-c = Coordinates(city=city, country=country)
+c = Coordinates(city=city, country=country_ISO)
 lat, lon = c.get_coordinates(api=WEATHER_API_KEY)
 
 # Get weather
@@ -46,7 +50,7 @@ w = Weather(latitude=lat, longitude=lon)
 weather = w.get_weather(api=WEATHER_API_KEY)
 
 # Get languages
-lang = Languages(country=country)
+lang = Languages(country=country_ISO)
 languages = lang.get_languages(username=GEONAMES_USERNAME)
 
 # Get tourist locations

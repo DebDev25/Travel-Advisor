@@ -1,11 +1,9 @@
 import requests
 
-from ISO_Codes import country_to_iso
-
 
 class Languages:
     def __init__(self, country):
-        self.country = country_to_iso[country]
+        self.country = country
         self.url = "http://api.geonames.org/countryInfoJSON"
 
     def get_languages(self, username):
@@ -20,9 +18,15 @@ class Languages:
             'username': username
         }
 
-        country_res = requests.get(self.url, params=country_params)
-        country_res.raise_for_status()
-        country_data = country_res.json()
+        # Handling API response
+        try:
+            country_res = requests.get(self.url, params=country_params)
+            country_res.raise_for_status()
+            country_data = country_res.json()
+        except requests.exceptions.RequestException:
+            raise RuntimeError("Geonames API request failed")
+        except (KeyError, ValueError):
+            raise RuntimeError("Geonames API returned unexpected data format")
 
         if country_data["geonames"]:
             languages = country_data["geonames"][0]["languages"].split(',')

@@ -18,9 +18,15 @@ class Weather:
             'appid': api,
         }
 
-        weather_res = requests.get(self.url, params=weather_params)
-        weather_res.raise_for_status()
-        weather_data = weather_res.json()
+        # Handling API response
+        try:
+            weather_res = requests.get(self.url, params=weather_params)
+            weather_res.raise_for_status()
+            weather_data = weather_res.json()
+        except requests.exceptions.RequestException:
+            raise RuntimeError("Openweathermap API request failed")
+        except (KeyError, ValueError):
+            raise RuntimeError("Openweathermap API returned unexpected data format")
 
         weather = {}
         for _ in range(3):
