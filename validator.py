@@ -1,6 +1,7 @@
 from ISO_Codes import country_to_iso
 import re
 
+
 def valid_country(country: str) -> str:
     country = country.strip().title()
     if not re.fullmatch(r"[A-Za-z\s\-]+", country):

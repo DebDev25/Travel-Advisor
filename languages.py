@@ -23,12 +23,14 @@ class Languages:
             country_res = requests.get(self.url, params=country_params)
             country_res.raise_for_status()
             country_data = country_res.json()
-        except requests.exceptions.RequestException:
-            raise RuntimeError("Geonames API request failed")
-        except (KeyError, ValueError):
-            raise RuntimeError("Geonames API returned unexpected data format")
-
-        if country_data["geonames"]:
-            languages = country_data["geonames"][0]["languages"].split(',')
-
-        return languages
+            if country_data.get("geonames"):
+                languages = country_data["geonames"][0]["languages"].split(',')
+            else:
+                languages = ["Current data unavailable"]
+            return languages
+        except requests.exceptions.RequestException as e:
+            print(f"Warning: Geonames API request failed - {e}")
+            return ["Current data unavailable"]
+        except (KeyError, ValueError, IndexError, TypeError) as e:
+            print(f"Warning: Geonames API returned unexpected data format - {e}")
+            return ["Current data unavailable"]

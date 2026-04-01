@@ -25,11 +25,11 @@ class Locations:
             loc_res = requests.get(self.url, params=loc_params)
             loc_res.raise_for_status()
             loc_data = loc_res.json()
-        except requests.exceptions.RequestException:
-            raise RuntimeError("Geoapify API request failed")
-        except (KeyError, ValueError):
-            raise RuntimeError("Geoapify API returned unexpected data format")
-
-        locations = [_["properties"].get("name", "Unnamed") for _ in loc_data["features"]]
-
-        return locations
+            locations = [_["properties"].get("name", "Unnamed") for _ in loc_data["features"]]
+            return locations
+        except requests.exceptions.RequestException as e:
+            print(f"Warning: Geoapify API request failed - {e}")
+            return ["Current data unavailable"]
+        except (KeyError, ValueError, TypeError) as e:
+            print(f"Warning: Geoapify API returned unexpected data format - {e}")
+            return ["Current data unavailable"]

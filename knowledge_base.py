@@ -46,31 +46,45 @@ def generate(confirmation):
             # Handling United States
             if formatted_country == "UnitedStates":
                 url = "https://travel.gc.ca/destinations/united-states"
-                res = requests.get(url, headers=headers)
-                res.raise_for_status()
+                try:
+                    res = requests.get(url, headers=headers)
+                    res.raise_for_status()
 
-                soup = BeautifulSoup(res.content, 'html.parser')
-                sections = soup.select(".mwsgeneric-base-html h2, .mwsgeneric-base-html p")
+                    soup = BeautifulSoup(res.content, 'html.parser')
+                    sections = soup.select(".mwsgeneric-base-html h2, .mwsgeneric-base-html p")
 
-                f.write(f"Country: United States\n")
-                for sec in sections:
-                    text = sec.get_text(strip=True)
-                    if text:
-                        f.write(text + "\n")
+                    f.write(f"Country: United States\n")
+                    if sections:
+                        for sec in sections:
+                            text = sec.get_text(strip=True)
+                            if text:
+                                f.write(text + "\n")
+                    else:
+                        f.write("Current data unavailable\n")
+
+                except Exception as e:
+                    print(f"Warning: Error fetching data for United States - {e}")
+                    f.write(f"Country: United States\n")
+                    f.write("Current data unavailable\n")
 
             else:
                 url = f"https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/{formatted_country}.html"
-                res = requests.get(url, headers=headers)
-                res.raise_for_status()
+                try:
+                    res = requests.get(url, headers=headers)
+                    res.raise_for_status()
 
-                soup = BeautifulSoup(res.content, 'html.parser')
-                advisory = soup.select_one(".tsg-rwd-alert-more-box-content")
+                    soup = BeautifulSoup(res.content, 'html.parser')
+                    advisory = soup.select_one(".tsg-rwd-alert-more-box-content")
 
-                f.write(f"Country: {country}\n")
-                if advisory:
-                    f.write(advisory.text.strip())
-                else:
-                    f.write("No advisory information found.")
+                    f.write(f"Country: {country}\n")
+                    if advisory:
+                        f.write(advisory.text.strip())
+                    else:
+                        f.write("Current data unavailable")
+                except Exception as e:
+                    print(f"Warning: Error fetching data for {country} - {e}")
+                    f.write(f"Country: {country}\n")
+                    f.write("Current data unavailable\n")
 
             f.write("\n\n" + "=" * 300 + "\n\n")
     load_and_index()

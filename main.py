@@ -45,17 +45,21 @@ if not GEONAMES_USERNAME:
 c = Coordinates(city=city, country=country_ISO)
 lat, lon = c.get_coordinates(api=WEATHER_API_KEY)
 
-# Get weather
-w = Weather(latitude=lat, longitude=lon)
-weather = w.get_weather(api=WEATHER_API_KEY)
+if lat is not None and lon is not None:
+    # Get weather
+    w = Weather(latitude=lat, longitude=lon)
+    weather = w.get_weather(api=WEATHER_API_KEY)
+
+    # Get tourist locations
+    loc = Locations()
+    locations = loc.get_locations(latitude=lat, longitude=lon, api=LOC_API_KEY)
+else:
+    weather = "Current data unavailable"
+    locations = ["Current data unavailable"]
 
 # Get languages
 lang = Languages(country=country_ISO)
 languages = lang.get_languages(username=GEONAMES_USERNAME)
-
-# Get tourist locations
-loc = Locations()
-locations = loc.get_locations(latitude=lat, longitude=lon, api=LOC_API_KEY)
 
 # -------------------------------------------- UPDATING KNOWLEDGE BASE -------------------------------------------------
 

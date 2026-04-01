@@ -23,9 +23,10 @@ class Coordinates:
             coord_res = requests.get(self.url, params=coord_params)
             coord_res.raise_for_status()
             coord_data = coord_res.json()
-        except requests.exceptions.RequestException:
-            raise RuntimeError("Openweathermap API request failed")
-        except (KeyError, ValueError):
-            raise RuntimeError("Openweathermap API returned unexpected data format")
-
-        return coord_data[0]["lat"], coord_data[0]["lon"]
+            return coord_data[0]["lat"], coord_data[0]["lon"]
+        except requests.exceptions.RequestException as e:
+            print(f"Warning: Openweathermap API request failed - {e}")
+            return None, None
+        except (KeyError, ValueError, IndexError) as e:
+            print(f"Warning: Openweathermap API returned unexpected data format - {e}")
+            return None, None
